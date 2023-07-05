@@ -2,9 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Users</title>
+    <link rel="stylesheet" type="text/css"
+          th:href="@{/css/style.css}"/>
 </head>
 <body>
+<h1 align="center">Users</h1>
+<div>
+    <table align="center" bgcolor="#00FA9A" border="5" height="50%" width="70%">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Lastname</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Password</th>
+        </tr>
+        <tr th:each="user:${users}">
+            <td th:utext="${user.getId()}"></td>
+            <td th:utext="${user.getName()}"></td>
+            <td th:utext="${user.getSurname()}"></td>
+            <td th:utext="${user.getEmail()}"></td>
+            <td th:text="${user.getUsername()}"></td>
+            <td th:text="${user.getPassword()}"></td>
 
+            <td>
+                <form method="GET" th:action="@{/edit/{id}(id=${user.getId()})}">
+                    <button>Update</button>
+                </form>
+            </td>
+
+            <td>
+                <form th:method="DELETE" th:action="@{/{id}/delete(id=${user.getId()})}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <div style='text-align:center; width:100%'>
+        <p><a th:href="@{/admin/new}">Create user</a></p>
+        <p><a th:href="@{/user}">Info about yourself</a></p>
+        <p><a th:href="@{/logout}">Logout</a></p>
+    </div>
+</div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.init;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -18,16 +19,18 @@ import java.util.Set;
 public class inDataBaseInitializer {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private BCryptPasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public inDataBaseInitializer(UserRepository userRepository, RoleRepository roleRepository) {
+    public inDataBaseInitializer(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
+    @ConditionalOnMissingBean
     public void init() {
         Role adminRole = new Role("ROLE_ADMIN");
         roleRepository.save(adminRole);
@@ -42,5 +45,3 @@ public class inDataBaseInitializer {
         userRepository.save(user);
     }
 }
-
-
