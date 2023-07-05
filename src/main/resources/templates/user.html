@@ -6,6 +6,30 @@
 <body>
 <h1>User, welcome spring boot security page!</h1>
 
+<table align="center" bgcolor="#00FA9A" border="5" height="50%" width="70%">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Email</th>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
 
+    <td th:utext="${currentUser.getId()}"></td>
+    <td th:utext="${currentUser.getName()}"></td>
+    <td th:utext="${currentUser.getSurname()}"></td>
+    <td th:utext="${currentUser.getEmail()}"></td>
+    <td th:utext="${currentUser.getUsername()}"></td>
+    <td th:utext="${currentUser.getPassword()}"></td>
+
+</table>
+
+<br><br>
+<form action="/logout">
+<div th:align="center">
+    <button>LOGOUT</button>
+</div>
+</form>
 </body>
 </html>

@@ -2,7 +2,6 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,39 +29,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        return userRepository.findAll();
     }
 
     @Override
     public User findUserById(Long id) {
-        return null;
+        return userRepository.getOne(id);
     }
 
     @Override
-    public void update(Long id, User updateUser) {
-
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
     public User saveUser(User user) {
-        return null;
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+
     }
 
     @Override
     public void deleteById(Long id) {
-
+        userRepository.deleteById(id);
     }
 
-    public User findBUserName(String username){
+
+    public User findByUserName(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findBUserName(username);
-        if(user == null){
-            throw new UsernameNotFoundException(String.format("User '%s' not found",username));
+        User user = findByUserName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
     }
