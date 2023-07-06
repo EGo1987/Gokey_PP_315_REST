@@ -30,7 +30,6 @@ public class inDataBaseInitializer {
     }
 
     @PostConstruct
-    @ConditionalOnMissingBean
     public void init() {
         Role adminRole = new Role("ROLE_ADMIN");
         roleRepository.save(adminRole);

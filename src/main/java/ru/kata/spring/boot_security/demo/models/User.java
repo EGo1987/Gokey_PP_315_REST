@@ -17,10 +17,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
+
     private String name;
     private String surname;
     private String email;
+    @Column(unique = true)
     private String username;
     private String password;
 
@@ -40,7 +41,6 @@ public class User implements UserDetails {
         this.email = email;
         this.username = username;
         this.password = password;
-
     }
 
     public Long getId() {
@@ -103,7 +103,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override

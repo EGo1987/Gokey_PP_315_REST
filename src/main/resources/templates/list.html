@@ -13,27 +13,29 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Lastname</th>
+            <th>Surname</th>
             <th>Email</th>
             <th>Username</th>
             <th>Password</th>
+
         </tr>
         <tr th:each="user:${users}">
             <td th:utext="${user.getId()}"></td>
             <td th:utext="${user.getName()}"></td>
             <td th:utext="${user.getSurname()}"></td>
             <td th:utext="${user.getEmail()}"></td>
-            <td th:text="${user.getUsername()}"></td>
-            <td th:text="${user.getPassword()}"></td>
+            <td th:utext="${user.getUsername()}"></td>
+            <td th:utext="${user.getPassword()}"></td>
 
             <td>
-                <form method="GET" th:action="@{/edit/{id}(id=${user.getId()})}">
+                <form method="GET" th:action="@{/admin/edit/{id}(id=${user.getId()})}">
                     <button>Update</button>
                 </form>
             </td>
 
             <td>
-                <form th:method="DELETE" th:action="@{/{id}/delete(id=${user.getId()})}">
+                <form th:method="DELETE" th:action="@{/admin/delete/{id}(id=${user.getId()})}">
+                    <input type="hidden" name="_method" value="DELETE" />
                     <input type="submit" value="Delete">
                 </form>
             </td>

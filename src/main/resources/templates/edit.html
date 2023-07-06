@@ -5,7 +5,7 @@
     <title>Update</title>
 </head>
 <body>
-<form th:method="POST" th:action="@{/edit}" th:object="${user}">
+<form th:method="Post" th:action="@{/admin/edit/{id}(id=${user.getId()})}" th:object="${user}">
     <label for="id">ID</label>
     <input name="id" type="number" id="id" readonly="readonly" th:value="${user.getId()}"/>
     <br>
@@ -25,6 +25,7 @@
     <input type="text" th:field="*{password}" id="password">
     <br/>
     <br>
+
     <label for="roles">Roles:</label>
     <select multiple name="roles" id="roles">
         <option th:each="role : ${roles}" th:value="${role.getId()}" th:text="${role.getName()}"></option>
