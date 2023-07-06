@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Users</title>
+    <title>Users LIST</title>
     <link rel="stylesheet" type="text/css"
           th:href="@{/css/style.css}"/>
 </head>
 <body>
-<h1 align="center">Users</h1>
+<h1 align="center">Users LIST</h1>
 <div>
     <table align="center" bgcolor="#00FA9A" border="5" height="50%" width="70%">
         <tr>
@@ -35,7 +35,7 @@
 
             <td>
                 <form th:method="DELETE" th:action="@{/admin/delete/{id}(id=${user.getId()})}">
-                    <input type="hidden" name="_method" value="DELETE" />
+                    <input type="hidden" name="_method" value="DELETE"/>
                     <input type="submit" value="Delete">
                 </form>
             </td>
@@ -43,9 +43,12 @@
     </table>
     <br/>
     <div style='text-align:center; width:100%'>
-        <button  th:href="@{/admin/new}">Create new user</button>
-        <button  th:href="@{/user}">Information about yourself</button>
-        <button  th:href="@{/logout}">Logout</button>
+        <p><a th:href="@{/admin/new}">Create new user</a></p>
+        <p><a th:href="@{/user}">Information about yourself</a></p>
+        <!--        <p><a th:href="@{/logout}">Logout</a></p>-->
+        <form action="/logout">
+            <button>LOGOUT</button>
+        </form>
     </div>
 </div>
 </body>

@@ -2,41 +2,42 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update</title>
+    <title>Update INFORMATION</title>
 </head>
-<body><h1 align="center">
-<form th:method="Post" th:action="@{/admin/edit/{id}(id=${user.getId()})}" th:object="${user}">
-    <label for="id">ID</label>
-    <input name="id" type="number" id="id" readonly="readonly" th:value="${user.getId()}"/>
-    <br>
-    <label for="name">Enter name:</label>
-    <input type="text" th:field="*{name}" id="name">
-    <br/>
-    <label for="surname">Enter surname:</label>
-    <input type="text" th:field="*{surname}" id="surname">
-    <br/>
-    <label for="email">Enter email</label>
-    <input type="text" th:field="*{email}" id="email">
-    <br/>
-    <label for="username">Enter username:</label>
-    <input type="text" th:field="*{username}" id="username">
-    <br/>
-    <label for="password">Enter password:</label>
-    <input type="text" th:field="*{password}" id="password">
-    <br/>
+<body>
+<h1 align="center">
+    <form th:method="Post" th:action="@{/admin/edit/{id}(id=${user.getId()})}" th:object="${user}">
+        <label for="id">ID</label>
+        <input name="id" type="number" id="id" readonly="readonly" th:value="${user.getId()}"/>
+        <br>
+        <label for="name">Enter name:</label>
+        <input type="text" th:field="*{name}" id="name">
+        <br/>
+        <label for="surname">Enter surname:</label>
+        <input type="text" th:field="*{surname}" id="surname">
+        <br/>
+        <label for="email">Enter email</label>
+        <input type="text" th:field="*{email}" id="email">
+        <br/>
+        <label for="username">Enter username:</label>
+        <input type="text" th:field="*{username}" id="username">
+        <br/>
+        <label for="password">Enter password:</label>
+        <input type="text" th:field="*{password}" id="password">
+        <br/>
 
 
-    <label for="roles">Roles:</label>
-    <select multiple name="roles" id="roles">
-        <option th:each="role : ${roles}" th:value="${role.getId()}" th:text="${role.getName()}"></option>
-    </select>
-    <br/>
-    <input type="hidden" name="_method" value="PATCH"/>
-    <input type="submit" value="Save">
-</form>
-<form action="/logout">
-    <button>LOGOUT</button>
-</form>
+        <label for="roles">Roles:</label>
+        <select multiple name="roles" id="roles">
+            <option th:each="role : ${roles}" th:value="${role.getId()}" th:text="${role.getName()}"></option>
+        </select>
+        <br/>
+        <input type="hidden" name="_method" value="PATCH"/>
+        <input type="submit" value="Save">
+    </form>
+    <form action="/logout">
+        <button>LOGOUT</button>
+    </form>
 </h1>
 </body>
 </html>
