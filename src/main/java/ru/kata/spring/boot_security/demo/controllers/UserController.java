@@ -1,6 +1,6 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -18,10 +18,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    //    @GetMapping
-//    public String massage(){
-//        return "user";
-//    }
     @GetMapping
     public String printUser(Model model, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
