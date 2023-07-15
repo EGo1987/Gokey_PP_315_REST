@@ -23,7 +23,7 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
     @Column(name = "email", unique = true)
-    @Email
+    @Email(message = "this email is already taken!")
     private String email;
     @Column(name = "password")
     private String password;
@@ -129,10 +129,10 @@ public class User implements UserDetails {
         for (String role : roles) {
             if (role != null) {
                 if (role.equals("ROLE_ADMIN")) {
-                    roleSet.add(new Role(2L, role));
+                    roleSet.add(new Role(1L, role));
                 }
                 if (role.equals("ROLE_USER")) {
-                    roleSet.add(new Role(1L, role));
+                    roleSet.add(new Role(2L, role));
                 }
             }
         }

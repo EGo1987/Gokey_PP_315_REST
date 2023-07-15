@@ -14,10 +14,10 @@ function userAuthInfo() {
             <td>${u.surname}</td>
             <td>${u.age}</td>
             <td>${u.email}</td>
-            <td>${u.roles.map(role => role.name.toString()).join(' ')}</td>
+            <td id=${'role' + u.id}>${u.roles.map(role => role.name.substring(5)).join(', ')}</td>
             </tr>`;
             data.innerHTML = temp;
-            panel.innerHTML = `<h5>${u.email} with roles: ${u.roles.map(role => role.name.toString()).join(' ')}</h5>`
+            panel.innerHTML = `<h5>${u.email} with roles: ${u.roles.map(role => role.name.substring(5)).join(', ')}</h5>`
         });
 }
 userAuthInfo()
