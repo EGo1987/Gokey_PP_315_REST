@@ -1,59 +1,82 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.dao.UserDaoImpl;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.repositories.UserRepository;
+
+
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Service
+@Component
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    @Lazy
-    private PasswordEncoder passwordEncoder;
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    private final UserDao userDao;
+
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
 
-    @Override
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
     @Transactional
     public void save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userDao.save(user);
     }
 
-    @Override
-    public User getUser(long id) {
-        return userRepository.getById(id);
+    public User show(int id) {
+        return userDao.show(id);
     }
 
-    @Override
     @Transactional
-    public void deleteUser(long id) {
-        userRepository.deleteById(id);
+    public void update(int id, User updateUser) {
+        userDao.update(id, updateUser);
     }
 
-    public User findByUsername(String username) { //обертка над методом репозитория
-        return userRepository.findByUsername(username);
+    @Transactional
+    public void delete(int id) {
+        userDao.delete(id);
     }
+
+    public User isExistById(User user) {
+        return userDao.isExistById(user);
+    }
+    private UserDaoImpl userDaoImpl;
+
+    @Autowired
+    public void setUserRepository (UserDaoImpl userDaoImpl) {
+        this.userDaoImpl = userDaoImpl;
+    }
+
+    public User findByUsername(String username){
+        return userDaoImpl.findByUsername(username);
+    }
+
+    public User findByEmail(String email) { return userDaoImpl.findByUsername(email);}
 
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = findByUsername(name); //попробуем получить юзера по имени
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", name));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userDaoImpl.findByEmail(email);
+        if (user == null){
+            throw new UsernameNotFoundException(String.format("User '%s' not found!", email));
         }
-        return user;
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),
+                mapRolesToAuthorities(user.getRoles()));
+    }
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
+        return roles.stream().map(r-> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 }

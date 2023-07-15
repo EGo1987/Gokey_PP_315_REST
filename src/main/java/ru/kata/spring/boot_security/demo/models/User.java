@@ -5,12 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -19,65 +14,29 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @NotEmpty(message = "Введите имя")
-    @Size(min = 3, max = 12, message = "Размер имени от 3 до 12")
-    private String name;
-
-    @NotEmpty(message = "Введите фамилию")
-    @Size(min = 3, max = 12, message = "Размер фамилии от 3 до 12")
-    private String surname;
-
-    @Min(value = 7, message = "Количество лет не должно быть меньше 7")
-    private int age;
-
-    @Column(unique = true)
-    @Email
+    @Column (name = "id")
+    private int id;
+    @Column(name = "username")
     private String username;
-
+    @Column(name = "surname")
+    private String surname;
+    @Column(name = "age")
+    private int age;
+    @Column(name = "email", unique = true)
+    @Email
+    private String email;
+    @Column(name = "password")
     private String password;
+    @Transient
+    private String passwordConfirm;
 
     @ManyToMany
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
+    @JoinTable (name = "users_roles",
+            joinColumns = @JoinColumn (name = "user_id"),
+            inverseJoinColumns = @JoinColumn (name = "role_id"))
+    private Set<Role> roles;
 
     public User() {
-    }
-
-    public User(String name, String surname, int age, String username, String password) {
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
-        this.username = username;
-        this.password = password;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     public int getAge() {
@@ -88,21 +47,51 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    @Override
-    public String getUsername() {
-        return username;
+    public void setUsername(String name) {
+        this.username = name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getSurname() {
+        return surname;
+    }
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream().map(r-> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 
     @Override
@@ -110,61 +99,56 @@ public class User implements UserDetails {
         return password;
     }
 
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+    public String getPasswordConfirm() {
+        return passwordConfirm;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {  //не истек ли срок действия учетной записи пользователя.
-        return true;
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
-    @Override
-    public boolean isAccountNonLocked() {  //заблокирована ли учетная запись пользователя.
-        return true;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {  //истек ли срок действия учетных данных пользователя
-        return true;
+    public void setRole(Set<Role> roles) {
+        this.roles = roles;
     }
 
-    @Override
-    public boolean isEnabled() { //указывающее, включен ли пользователь в системе.
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", age=" + age +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public void setRoles(String[] roles) {
+        Set<Role> roleSet = new HashSet<>();
+        for (String role : roles) {
+            if (role != null) {
+                if (role.equals("ROLE_ADMIN")) {
+                    roleSet.add(new Role(2L, role));
+                }
+                if (role.equals("ROLE_USER")) {
+                    roleSet.add(new Role(1L, role));
+                }
+            }
+        }
+        this.roles = roleSet;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id
-                && age == user.age
-                && Objects.equals(name, user.name)
-                && Objects.equals(surname, user.surname)
-                && Objects.equals(username, user.username);
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(surname, user.surname);
     }
-
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, age, username);
+        return Objects.hash(id, email, username, surname);
     }
+
 }
