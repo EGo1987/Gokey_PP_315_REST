@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.models.User;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -40,7 +41,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void update(int id, User updateUser) {
-        String [] roleUser = new String[] {"ROLE_USER"};
+        String[] roleUser = new String[]{"ROLE_USER"};
 
         User user = show(id);
         user.setUsername(updateUser.getUsername());
@@ -48,7 +49,7 @@ public class UserDaoImpl implements UserDao {
         user.setAge(updateUser.getAge());
         user.setEmail(updateUser.getEmail());
         user.setPassword(updateUser.getPassword());
-        if (updateUser.getRoles()==null){
+        if (updateUser.getRoles() == null) {
             updateUser.setRoles(roleUser);
         }
         user.setRole(updateUser.getRoles());
@@ -63,18 +64,20 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User isExistById(User user) {
-        if(entityManager.contains(user)) {
+        if (entityManager.contains(user)) {
             entityManager.remove(user);
         } else {
             entityManager.remove(entityManager.merge(user));
         }
         return user;
     }
-    public User findByUsername(String username){
+
+    public User findByUsername(String username) {
         return entityManager.createQuery("select u from User u where u.username = :username", User.class)
                 .setParameter("username", username).getSingleResult();
     }
-    public User findByEmail(String email){
+
+    public User findByEmail(String email) {
         return entityManager.createQuery("select u from User u where u.email = :email", User.class)
                 .setParameter("email", email).getSingleResult();
     }

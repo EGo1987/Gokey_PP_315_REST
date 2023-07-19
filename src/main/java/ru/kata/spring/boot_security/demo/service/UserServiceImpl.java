@@ -1,15 +1,14 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
-import ru.kata.spring.boot_security.demo.dao.UserDaoImpl;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
@@ -34,6 +33,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     public void save(User user) {
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userDao.save(user);
     }
 
@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     public void update(int id, User updateUser) {
+        updateUser.setPassword(new BCryptPasswordEncoder().encode(updateUser.getPassword()));
         userDao.update(id, updateUser);
     }
 
@@ -51,32 +52,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userDao.delete(id);
     }
 
-    public User isExistById(User user) {
-        return userDao.isExistById(user);
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
     }
-    private UserDaoImpl userDaoImpl;
-
-    @Autowired
-    public void setUserRepository (UserDaoImpl userDaoImpl) {
-        this.userDaoImpl = userDaoImpl;
-    }
-
-    public User findByUsername(String username){
-        return userDaoImpl.findByUsername(username);
-    }
-
-    public User findByEmail(String email) { return userDaoImpl.findByUsername(email);}
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userDaoImpl.findByEmail(email);
-        if (user == null){
+        User user = userDao.findByEmail(email);
+        if (user == null) {
             throw new UsernameNotFoundException(String.format("User '%s' not found!", email));
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
     }
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
-        return roles.stream().map(r-> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 }
