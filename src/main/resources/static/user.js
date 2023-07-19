@@ -20,4 +20,5 @@ function userAuthInfo() {
             panel.innerHTML = `<h5>${u.email} with roles: ${u.roles.map(role => role.name.substring(5)).join(', ')}</h5>`
         });
 }
+
 userAuthInfo()

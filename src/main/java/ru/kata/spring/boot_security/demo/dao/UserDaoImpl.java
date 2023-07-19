@@ -62,16 +62,6 @@ public class UserDaoImpl implements UserDao {
         entityManager.remove(user);
     }
 
-    @Override
-    public User isExistById(User user) {
-        if (entityManager.contains(user)) {
-            entityManager.remove(user);
-        } else {
-            entityManager.remove(entityManager.merge(user));
-        }
-        return user;
-    }
-
     public User findByUsername(String username) {
         return entityManager.createQuery("select u from User u where u.username = :username", User.class)
                 .setParameter("username", username).getSingleResult();
